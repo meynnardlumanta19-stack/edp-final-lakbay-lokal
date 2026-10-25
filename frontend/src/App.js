@@ -1,185 +1,199 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
+import './App.css';
 
 const API_BASE = 'http://localhost:5000';
+const EMPTY_FORM = { name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' };
 
-// ==========================================
-// 1. NAVIGATION BAR
-// ==========================================
 function Navbar() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => setMenuOpen(false), [location.pathname]);
+
   return (
-    <nav style={{ background: '#006699', color: '#fff', padding: '1rem 2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontFamily: 'sans-serif' }}>
-      <h2 style={{ margin: 0 }}>🌴 Lakbay Lokal</h2>
-      <div style={{ display: 'flex', gap: '20px' }}>
-        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
-        <Link to="/explore" style={{ color: '#fff', textDecoration: 'none' }}>Explore & Filter</Link>
-        <Link to="/favorites" style={{ color: '#fff', textDecoration: 'none' }}>Favorites</Link>
-        <Link to="/admin" style={{ color: '#ffcc00', textDecoration: 'none', fontWeight: 'bold' }}>Admin Dashboard</Link>
-      </div>
-    </nav>
+    <header className="site-header">
+      <nav className="nav-shell" aria-label="Main navigation">
+        <Link className="brand" to="/" aria-label="Lakbay Lokal home">
+          <span className="brand-mark" aria-hidden="true">L</span>
+          <span>Lakbay <span className="brand-accent">Lokal</span><small>FIND YOUR KIND OF PARADISE</small></span>
+        </Link>
+        <button className="menu-toggle" type="button" aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}>
+          <span /><span /><span />
+        </button>
+        <div className={`nav-links${menuOpen ? ' nav-links-open' : ''}`}>
+          <Link to="/">Home</Link>
+          <Link to="/explore">Explore</Link>
+          <Link to="/favorites">Favorites</Link>
+          <Link className="nav-admin" to="/admin">Admin <span aria-hidden="true">↗</span></Link>
+        </div>
+      </nav>
+    </header>
   );
 }
 
-// ==========================================
-// 2. HOME / LANDING PAGE
-// ==========================================
 function Home() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    navigate(`/explore?search=${searchTerm}`);
+  const handleSearch = (event) => {
+    event.preventDefault();
+    navigate(`/explore?search=${encodeURIComponent(searchTerm.trim())}`);
   };
 
   return (
-    <div style={{ padding: '60px 20px', textAlign: 'center', fontFamily: 'sans-serif' }}>
-      <h1 style={{ fontSize: '2.8rem', color: '#006699', marginBottom: '10px' }}>Discover Local Tourism with Lakbay Lokal</h1>
-      <p style={{ fontSize: '1.2rem', color: '#555', marginBottom: '30px' }}>Find the best spots, restaurants, beaches, and hotels tailored to your budget.</p>
-      
-      <form onSubmit={handleSearch} style={{ display: 'inline-flex', gap: '10px', maxWidth: '500px', width: '100%' }}>
-        <input 
-          type="text" 
-          placeholder="Search destinations or locations (e.g., Maasin)..." 
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ flex: 1, padding: '12px', border: '1px solid #ccc', borderRadius: '8px', fontSize: '1rem' }}
-        />
-        <button type="submit" style={{ background: '#006699', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>Search</button>
-      </form>
+    <main>
+      <section className="hero">
+        <div className="hero-content">
+          <span className="eyebrow hero-eyebrow"><span className="eyebrow-line" /> YOUR NEXT GREAT STORY STARTS HERE</span>
+          <h1>Find your own<br /><em>island rhythm.</em></h1>
+          <p>Little-known coastlines, unforgettable local eats, and stays worth slowing down for. Your Philippines, your way.</p>
+          <form className="hero-search" onSubmit={handleSearch}>
+            <span className="search-icon" aria-hidden="true">⌕</span>
+            <input
+              aria-label="Search destinations or locations"
+              type="search"
+              placeholder="Where do you want to go?"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+            <button className="button button-primary" type="submit">Find a place <span aria-hidden="true">→</span></button>
+          </form>
+          <div className="hero-note"><span className="avatar-stack" aria-hidden="true"><i>J</i><i>M</i><i>A</i></span><span>Loved by curious travelers across the islands</span></div>
+        </div>
+        <div className="hero-caption"><span>01 / 07</span><span className="caption-rule" /> SOUTHERN LEYTE, PHILIPPINES</div>
+        <div className="hero-stamp" aria-hidden="true"><span>GO A LITTLE</span><strong>LOCAL</strong><span>COME BACK FULL</span></div>
+      </section>
 
-      <div style={{ marginTop: '40px' }}>
-        <Link to="/explore" style={{ background: '#10b981', padding: '12px 24px', borderRadius: '8px', textDecoration: 'none', color: '#fff', fontWeight: 'bold' }}>
-          Browse All Destinations →
-        </Link>
-      </div>
-    </div>
+      <section className="intro-section page-shell">
+        <div>
+          <span className="eyebrow">MADE FOR THE WAY YOU TRAVEL</span>
+          <h2>Good trips feel<br /><em>like you found them.</em></h2>
+        </div>
+        <p>Skip the usual itinerary. Find the places locals love, choose what fits your budget, and make a trip that’s yours from the very first stop.</p>
+      </section>
+
+      <section className="discover-strip">
+        <div className="discover-copy">
+          <span className="eyebrow">A GOOD PLACE TO START</span>
+          <h2>There’s more<br />out there.</h2>
+          <p>Explore hidden corners, small-town favorites, and the kind of places you’ll tell your friends about.</p>
+          <Link className="text-link" to="/explore">Explore all destinations <span aria-hidden="true">→</span></Link>
+        </div>
+        <div className="discover-photo discover-photo-one"><span className="photo-label">THE COAST IS CALLING</span></div>
+        <div className="discover-photo discover-photo-two"><span className="photo-label">TAKE THE LONG WAY</span></div>
+      </section>
+
+      <section className="home-bottom page-shell">
+        <div><span className="eyebrow">GO ON, MAKE A PLAN</span><h2>Your next favorite place<br />is just around the <em>bend.</em></h2></div>
+        <Link className="button button-dark" to="/explore">Start exploring <span aria-hidden="true">→</span></Link>
+      </section>
+    </main>
   );
 }
 
-// ==========================================
-// 3. EXPLORE & BUDGET FILTER PAGE
-// ==========================================
 function ExplorePage() {
   const [destinations, setDestinations] = useState([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(() => new URLSearchParams(window.location.search).get('search') || '');
   const [category, setCategory] = useState('All');
   const [budget, setBudget] = useState('All');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     axios.get(`${API_BASE}/api/destinations`, { params: { search, category, budget } })
-      .then(res => setDestinations(res.data))
-      .catch(err => console.error('Error fetching data:', err));
+      .then((response) => {
+        setDestinations(response.data);
+        setError('');
+      })
+      .catch((err) => {
+        console.error('Error fetching destinations:', err);
+        setError('We couldn’t load destinations right now. Please try again in a moment.');
+      });
   }, [search, category, budget]);
 
   return (
-    <div style={{ padding: '30px', maxWidth: '1200px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h2>Explore Destinations</h2>
-
-      {/* Filter Bar */}
-      <div style={{ display: 'flex', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
-        <input 
-          type="text" 
-          placeholder="Search by name or location..." 
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '6px', flex: '1', minWidth: '200px' }}
-        />
-
-        <select value={category} onChange={(e) => setCategory(e.target.value)} style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '6px' }}>
-          <option value="All">All Categories</option>
-          <option value="Tourist Spot">Tourist Spot</option>
-          <option value="Restaurant">Restaurant</option>
-          <option value="Hotel">Hotel</option>
-          <option value="Beach">Beach</option>
-        </select>
-
-        {/* Budget Filter Selector */}
-        <select value={budget} onChange={(e) => setBudget(e.target.value)} style={{ padding: '10px', border: '1px solid #ccc', borderRadius: '6px' }}>
-          <option value="All">All Budgets</option>
-          <option value="Low">Low Budget (₱)</option>
-          <option value="Medium">Medium Budget (₱₱)</option>
-          <option value="High">High Budget (₱₱₱)</option>
-        </select>
+    <main className="page-shell page-content">
+      <div className="page-heading">
+        <div><span className="eyebrow">THE GOOD STUFF IS OUT THERE</span><h1>Find your <em>somewhere.</em></h1></div>
+        <p>From slow mornings by the sea to late-night local favorites, start with what feels right.</p>
       </div>
-
-      {/* Grid View */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-        {destinations.map((item) => (
-          <div key={item._id} style={{ border: '1px solid #e5e7eb', borderRadius: '8px', overflow: 'hidden', background: '#fff', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-            <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: '160px', objectFit: 'cover' }} />
-            <div style={{ padding: '15px' }}>
-              <span style={{ fontSize: '0.75rem', background: '#e0f2fe', color: '#0369a1', padding: '3px 8px', borderRadius: '4px', fontWeight: 'bold' }}>{item.category}</span>
-              <h3 style={{ margin: '10px 0 5px 0', fontSize: '1.2rem' }}>{item.name}</h3>
-              <p style={{ color: '#666', fontSize: '0.9rem', margin: '0 0 10px 0' }}>📍 {item.location}</p>
-              <p style={{ fontWeight: 'bold', color: '#16a34a', fontSize: '0.9rem' }}>Budget: {item.budget}</p>
-              <Link to={`/destination/${item._id}`} style={{ display: 'block', textAlign: 'center', marginTop: '15px', background: '#006699', color: '#fff', padding: '8px', borderRadius: '6px', textDecoration: 'none' }}>
-                View Details
+      <section className="filter-panel" aria-label="Filter destinations">
+        <label className="filter-search"><span aria-hidden="true">⌕</span><input type="search" placeholder="Search a place or location..." value={search} onChange={(event) => setSearch(event.target.value)} /></label>
+        <label className="select-wrap"><span>GOING FOR</span><select aria-label="Filter by category" value={category} onChange={(event) => setCategory(event.target.value)}>
+          <option value="All">All categories</option><option value="Tourist Spot">Tourist spot</option><option value="Restaurant">Restaurant</option><option value="Hotel">Hotel</option><option value="Beach">Beach</option>
+        </select></label>
+        <label className="select-wrap"><span>YOUR BUDGET</span><select aria-label="Filter by budget" value={budget} onChange={(event) => setBudget(event.target.value)}>
+          <option value="All">Any budget</option><option value="Low">Low · ₱</option><option value="Medium">Medium · ₱₱</option><option value="High">High · ₱₱₱</option>
+        </select></label>
+      </section>
+      <div className="results-heading"><span>{destinations.length} {destinations.length === 1 ? 'place' : 'places'} to get you started</span><span>MADE FOR YOUR NEXT GETAWAY</span></div>
+      {error ? <div className="notice notice-error" role="alert">{error}</div> : destinations.length === 0 ? (
+        <div className="empty-state"><span className="empty-icon" aria-hidden="true">⌕</span><h2>No places found just yet.</h2><p>Try another search or change your filters to see what’s out there.</p></div>
+      ) : (
+        <div className="destination-grid">
+          {destinations.map((item, index) => (
+            <article className="destination-card" key={item._id}>
+              <Link className="card-image-wrap" to={`/destination/${item._id}`} aria-label={`View ${item.name}`}>
+                <img src={item.imageUrl} alt={item.name} loading="lazy" />
+                <span className="card-number">{String(index + 1).padStart(2, '0')}</span>
+                <span className="category-pill">{item.category}</span>
               </Link>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+              <div className="card-body">
+                <p className="card-location"><span aria-hidden="true">↗</span> {item.location}</p>
+                <h2><Link to={`/destination/${item._id}`}>{item.name}</Link></h2>
+                <div className="card-footer"><span>{item.budget} budget</span><Link to={`/destination/${item._id}`}>Take a look <span aria-hidden="true">→</span></Link></div>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+    </main>
   );
 }
 
-// ==========================================
-// 4. DESTINATION DETAIL PAGE
-// ==========================================
 function DestinationDetail() {
   const { id } = useParams();
   const [destination, setDestination] = useState(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     axios.get(`${API_BASE}/api/destinations`)
-      .then(res => {
-        const found = res.data.find(item => item._id === id);
+      .then((response) => {
+        const found = response.data.find((item) => item._id === id);
         setDestination(found);
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error('Error fetching destination:', err));
   }, [id]);
 
   const saveToFavorites = () => {
     const existing = JSON.parse(localStorage.getItem('lakbay_favs')) || [];
-    if (!existing.some(fav => fav._id === id)) {
+    if (!existing.some((favorite) => favorite._id === id)) {
       existing.push(destination);
       localStorage.setItem('lakbay_favs', JSON.stringify(existing));
-      alert('Added to your Favorites wishlist!');
+      setSaved(true);
     } else {
-      alert('Already in your favorites.');
+      setSaved(true);
     }
   };
 
-  if (!destination) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading details...</div>;
+  if (!destination) return <main className="page-shell loading-state"><span className="eyebrow">ONE MOMENT</span><h1>Finding your place...</h1></main>;
 
   return (
-    <div style={{ padding: '40px', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <Link to="/explore" style={{ color: '#006699', textDecoration: 'none', fontWeight: 'bold' }}>← Back to Explore</Link>
-      <h1 style={{ marginTop: '20px' }}>{destination.name}</h1>
-      <p style={{ color: '#666', fontSize: '1.1rem' }}>📍 {destination.location}</p>
-      
-      <img src={destination.imageUrl} alt={destination.name} style={{ width: '100%', height: '350px', objectFit: 'cover', borderRadius: '10px', margin: '20px 0' }} />
-      
-      <div style={{ display: 'flex', gap: '20px', marginBottom: '20px' }}>
-        <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold' }}>Category: {destination.category}</span>
-        <span style={{ background: '#dcfce7', color: '#15803d', padding: '6px 12px', borderRadius: '6px', fontWeight: 'bold' }}>Budget: {destination.budget}</span>
+    <main className="page-shell page-content detail-page">
+      <Link className="back-link" to="/explore"><span aria-hidden="true">←</span> Back to all places</Link>
+      <div className="detail-hero">
+        <img src={destination.imageUrl} alt={destination.name} />
+        <div className="detail-overlay"><span className="eyebrow">{destination.category} · {destination.budget} BUDGET</span><h1>{destination.name}</h1><p><span aria-hidden="true">↗</span> {destination.location}</p></div>
       </div>
-
-      <h3>Description</h3>
-      <p style={{ lineHeight: '1.6', color: '#333' }}>{destination.description}</p>
-
-      <button onClick={saveToFavorites} style={{ marginTop: '30px', background: '#f59e0b', color: '#fff', border: 'none', padding: '12px 20px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
-        ★ Save to Favorites
-      </button>
-    </div>
+      <section className="detail-info">
+        <div><span className="eyebrow">A LITTLE ABOUT THIS PLACE</span><h2>Stay for a while.</h2><p>{destination.description}</p></div>
+        <aside className="save-card"><span className="save-star" aria-hidden="true">✳</span><h3>One for the list?</h3><p>Keep this place close for your next island adventure.</p><button className={`button ${saved ? 'button-saved' : 'button-primary'}`} onClick={saveToFavorites}>{saved ? 'Saved to favorites ✓' : 'Save to favorites ♡'}</button></aside>
+      </section>
+    </main>
   );
 }
 
-// ==========================================
-// 5. FAVORITES PAGE
-// ==========================================
 function FavoritesPage() {
   const [favorites, setFavorites] = useState([]);
 
@@ -188,140 +202,137 @@ function FavoritesPage() {
   }, []);
 
   const removeFav = (id) => {
-    const updated = favorites.filter(item => item._id !== id);
+    const updated = favorites.filter((item) => item._id !== id);
     setFavorites(updated);
     localStorage.setItem('lakbay_favs', JSON.stringify(updated));
   };
 
   return (
-    <div style={{ padding: '30px', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h2>My Saved Favorites</h2>
+    <main className="page-shell page-content">
+      <div className="page-heading favorites-heading"><div><span className="eyebrow">YOUR LITTLE BLACK BOOK</span><h1>Places to <em>come back to.</em></h1></div><p>All the spots you’ve saved for someday. Someday can be soon.</p></div>
       {favorites.length === 0 ? (
-        <p style={{ color: '#666', marginTop: '20px' }}>No favorite places bookmarked yet.</p>
+        <div className="empty-state"><span className="empty-icon" aria-hidden="true">♡</span><h2>Your list is waiting.</h2><p>Save a few places you love and they’ll find a home here.</p><Link className="button button-dark" to="/explore">Find a place <span aria-hidden="true">→</span></Link></div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '20px', marginTop: '20px' }}>
-          {favorites.map(item => (
-            <div key={item._id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '15px', background: '#fff' }}>
-              <h4>{item.name}</h4>
-              <p style={{ fontSize: '0.85rem', color: '#666' }}>{item.location}</p>
-              <button onClick={() => removeFav(item._id)} style={{ background: '#ef4444', color: '#fff', border: 'none', padding: '6px 12px', borderRadius: '4px', cursor: 'pointer', marginTop: '10px' }}>
-                Remove
-              </button>
-            </div>
+        <div className="destination-grid">
+          {favorites.map((item, index) => (
+            <article className="destination-card" key={item._id}>
+              <Link className="card-image-wrap" to={`/destination/${item._id}`} aria-label={`View ${item.name}`}><img src={item.imageUrl} alt={item.name} loading="lazy" /><span className="card-number">{String(index + 1).padStart(2, '0')}</span><span className="category-pill">{item.category}</span></Link>
+              <div className="card-body"><p className="card-location"><span aria-hidden="true">↗</span> {item.location}</p><h2><Link to={`/destination/${item._id}`}>{item.name}</Link></h2><div className="card-footer"><span>{item.budget} budget</span><button className="remove-button" onClick={() => removeFav(item._id)}>Remove <span aria-hidden="true">×</span></button></div></div>
+            </article>
           ))}
         </div>
       )}
-    </div>
+    </main>
   );
 }
 
-// ==========================================
-// 6. ADMIN DASHBOARD (CRUD - NO LOGIN)
-// ==========================================
 function AdminDashboard() {
   const [destinations, setDestinations] = useState([]);
-  const [formData, setFormData] = useState({ name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' });
+  const [formData, setFormData] = useState(EMPTY_FORM);
   const [editingId, setEditingId] = useState(null);
+  const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
 
   const fetchAll = () => {
     axios.get(`${API_BASE}/api/destinations`)
-      .then(res => setDestinations(res.data))
-      .catch(err => console.error(err));
+      .then((response) => {
+        setDestinations(response.data);
+        setError('');
+      })
+      .catch((err) => {
+        console.error('Error fetching destinations:', err);
+        setError('Could not load listings. Check that the server is running, then try again.');
+      });
   };
 
   useEffect(() => { fetchAll(); }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setNotice('');
     try {
       if (editingId) {
         await axios.put(`${API_BASE}/api/destinations/${editingId}`, formData);
-        setEditingId(null);
+        setNotice('Your destination has been updated.');
       } else {
         await axios.post(`${API_BASE}/api/destinations`, formData);
+        setNotice('Your new destination is live.');
       }
-      setFormData({ name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' });
+      setEditingId(null);
+      setFormData(EMPTY_FORM);
       fetchAll();
     } catch (err) {
-      console.error(err);
+      console.error('Error saving destination:', err);
+      setError('Your changes could not be saved. Please try again.');
     }
   };
 
   const handleEdit = (item) => {
     setEditingId(item._id);
-    setFormData(item);
+    setFormData({ ...EMPTY_FORM, ...item });
+    setNotice('');
+    setError('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Delete this destination record?')) {
+    if (!window.confirm('Delete this destination record?')) return;
+    setError('');
+    setNotice('');
+    try {
       await axios.delete(`${API_BASE}/api/destinations/${id}`);
+      setNotice('The destination has been deleted.');
       fetchAll();
+    } catch (err) {
+      console.error('Error deleting destination:', err);
+      setError('The destination could not be deleted. Please try again.');
     }
   };
 
-  return (
-    <div style={{ padding: '30px', maxWidth: '1100px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-      <h2 style={{ color: '#006699' }}>Admin Management Portal</h2>
-      
-      <form onSubmit={handleSubmit} style={{ background: '#f8fafc', padding: '20px', borderRadius: '8px', border: '1px solid #cbd5e1', marginBottom: '30px', maxWidth: '500px', display: 'grid', gap: '12px' }}>
-        <h3>{editingId ? 'Edit Destination' : 'Add New Destination'}</h3>
-        <input type="text" placeholder="Name" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
-        <input type="text" placeholder="Location" value={formData.location} onChange={e => setFormData({...formData, location: e.target.value})} required style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
-        <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}>
-          <option value="Tourist Spot">Tourist Spot</option>
-          <option value="Restaurant">Restaurant</option>
-          <option value="Hotel">Hotel</option>
-          <option value="Beach">Beach</option>
-        </select>
-        <select value={formData.budget} onChange={e => setFormData({...formData, budget: e.target.value})} style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }}>
-          <option value="Low">Low (₱)</option>
-          <option value="Medium">Medium (₱₱)</option>
-          <option value="High">High (₱₱₱)</option>
-        </select>
-        <input type="url" placeholder="Image URL" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} required style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px' }} />
-        <textarea placeholder="Description" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required style={{ padding: '8px', border: '1px solid #ccc', borderRadius: '4px', height: '80px' }} />
-        
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button type="submit" style={{ background: '#006699', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
-            {editingId ? 'Update Listing' : 'Create Listing'}
-          </button>
-          {editingId && <button type="button" onClick={() => setEditingId(null)} style={{ background: '#64748b', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>}
-        </div>
-      </form>
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData(EMPTY_FORM);
+  };
 
-      <h3>Existing Listings</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff' }}>
-        <thead>
-          <tr style={{ background: '#006699', color: '#fff', textAlign: 'left' }}>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Name</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Category</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Location</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd' }}>Budget</th>
-            <th style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {destinations.map(item => (
-            <tr key={item._id}>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.name}</td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.category}</td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.location}</td>
-              <td style={{ padding: '10px', border: '1px solid #ddd' }}>{item.budget}</td>
-              <td style={{ padding: '10px', border: '1px solid #ddd', textAlign: 'center' }}>
-                <button onClick={() => handleEdit(item)} style={{ background: '#f59e0b', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', marginRight: '5px', cursor: 'pointer' }}>Edit</button>
-                <button onClick={() => handleDelete(item._id)} style={{ background: '#dc2626', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer' }}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+  return (
+    <main className="page-shell page-content admin-page">
+      <div className="page-heading"><div><span className="eyebrow">YOUR CORNER OF THE INTERNET</span><h1>Manage the <em>good stuff.</em></h1></div><p>Add the places worth sharing and keep your destination list up to date.</p></div>
+      <div className="admin-layout">
+        <section className="admin-form-panel">
+          <div className="panel-heading"><span className="eyebrow">{editingId ? 'MAKE IT JUST RIGHT' : 'ADD SOMEWHERE NEW'}</span><h2>{editingId ? 'Edit destination' : 'New destination'}</h2></div>
+          {error && <div className="notice notice-error" role="alert">{error}</div>}
+          {notice && <div className="notice notice-success" role="status">{notice}</div>}
+          <form className="admin-form" onSubmit={handleSubmit}>
+            <label>Place name<input type="text" placeholder="e.g. A quiet cove in Southern Leyte" value={formData.name} onChange={(event) => setFormData({ ...formData, name: event.target.value })} required /></label>
+            <label>Location<input type="text" placeholder="Town, province" value={formData.location} onChange={(event) => setFormData({ ...formData, location: event.target.value })} required /></label>
+            <div className="form-row">
+              <label>Category<select value={formData.category} onChange={(event) => setFormData({ ...formData, category: event.target.value })}><option value="Tourist Spot">Tourist Spot</option><option value="Restaurant">Restaurant</option><option value="Hotel">Hotel</option><option value="Beach">Beach</option></select></label>
+              <label>Budget<select value={formData.budget} onChange={(event) => setFormData({ ...formData, budget: event.target.value })}><option value="Low">Low · ₱</option><option value="Medium">Medium · ₱₱</option><option value="High">High · ₱₱₱</option></select></label>
+            </div>
+            <label>Image URL<input type="url" placeholder="https://..." value={formData.imageUrl} onChange={(event) => setFormData({ ...formData, imageUrl: event.target.value })} required /></label>
+            <label>Tell us about it<textarea placeholder="What makes this place special?" value={formData.description} onChange={(event) => setFormData({ ...formData, description: event.target.value })} required rows="4" /></label>
+            <div className="form-actions"><button className="button button-dark" type="submit">{editingId ? 'Save changes' : 'Add destination'} <span aria-hidden="true">→</span></button>{editingId && <button className="button button-quiet" type="button" onClick={cancelEdit}>Cancel</button>}</div>
+          </form>
+        </section>
+        <section className="admin-list-panel">
+          <div className="panel-heading list-heading"><div><span className="eyebrow">THE DESTINATION LIST</span><h2>Places you’ve added</h2></div><span className="count-badge">{destinations.length}</span></div>
+          {destinations.length === 0 ? <div className="admin-empty">No destinations yet. Add your first place to get started.</div> : (
+            <div className="admin-table-wrap"><table className="admin-table">
+              <thead><tr><th>PLACE</th><th>CATEGORY</th><th>LOCATION</th><th>BUDGET</th><th>ACTIONS</th></tr></thead>
+              <tbody>{destinations.map((item) => <tr key={item._id}><td data-label="Place"><strong>{item.name}</strong></td><td data-label="Category">{item.category}</td><td data-label="Location">{item.location}</td><td data-label="Budget">{item.budget}</td><td data-label="Actions"><div className="table-actions"><button className="edit-button" onClick={() => handleEdit(item)}>Edit</button><button className="delete-button" onClick={() => handleDelete(item._id)}>Delete</button></div></td></tr>)}</tbody>
+            </table></div>
+          )}
+        </section>
+      </div>
+    </main>
   );
 }
 
-// ==========================================
-// 7. ROUTER APP
-// ==========================================
+function Footer() {
+  return <footer className="site-footer"><div className="page-shell footer-inner"><Link className="brand footer-brand" to="/"><span className="brand-mark" aria-hidden="true">L</span><span>Lakbay <span className="brand-accent">Lokal</span><small>FIND YOUR KIND OF PARADISE</small></span></Link><p>Take the long way. It’s usually the good one.</p><span>© {new Date().getFullYear()} LAKBAY LOKAL</span></div></footer>;
+}
+
 export default function App() {
   return (
     <Router>
@@ -333,6 +344,7 @@ export default function App() {
         <Route path="/favorites" element={<FavoritesPage />} />
         <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
