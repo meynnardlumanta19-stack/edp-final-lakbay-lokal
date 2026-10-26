@@ -7,10 +7,8 @@ app.use(express.json());
 app.use(cors());
 
 // MongoDB Connection (Local or Atlas)
-mongoose.connect('mongodb://127.0.0.1:27017/lakbay_lokal', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => console.log('MongoDB Connected Successfully'))
+mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/lakbay_lokal')
+  .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('DB Connection Error:', err));
 
 // Destination Schema Model
