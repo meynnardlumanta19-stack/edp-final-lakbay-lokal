@@ -2,6 +2,31 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Using the app on a phone
+
+For local phone testing, connect the phone and computer to the same Wi-Fi network,
+start the backend and frontend on the computer, and open `http://<computer-ip>:3000`
+on the phone. Find the computer's IPv4 address by running `ipconfig` in Windows
+and using the address listed under its active Wi-Fi adapter. The frontend uses
+the hostname in that URL to reach the backend on port `5000`; allow Node.js
+through Windows Firewall on a private network if prompted.
+
+If the API is hosted at a different address, set `REACT_APP_API_BASE` in
+`frontend/.env` (for example, `REACT_APP_API_BASE=https://api.example.com`) and
+restart the frontend. Do not use `localhost` for a backend hosted on another
+device, since it refers to the device opening the page.
+
+## Trip planner
+
+Open **Trip planner** to chat with the local trip assistant or enter a budget,
+trip length, group size, starting point, and travel preference. The chat matches
+your message to destinations returned by the backend and can update the suggested
+itinerary, budget breakdown, stay, and Google Maps directions as you refine your
+request. It uses local destination data and simple matching—not a generative AI
+service. Cost and transport details are estimates, not live prices or bookings.
+Seed the backend database with `node seed.js` from the `backend` folder to load
+the sample Southern Leyte destinations.
+
 ## Available Scripts
 
 In the project directory, you can run:
