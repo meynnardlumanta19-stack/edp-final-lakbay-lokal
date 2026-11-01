@@ -3,8 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Link, useParams, useNavigate, u
 import axios from 'axios';
 import './App.css';
 
-const API_BASE = (process.env.REACT_APP_API_BASE || `${window.location.protocol}//${window.location.hostname}:5000`).replace(/\/$/, '');
-const EMPTY_FORM = { name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' };
+// Replace Line 7 with this:
+const API_BASE = process.env.NODE_ENV === 'production' 
+  ? '' 
+  : (process.env.REACT_APP_API_BASE || 'http://localhost:5000').replace(/\/$/, '');const EMPTY_FORM = { name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' };
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
