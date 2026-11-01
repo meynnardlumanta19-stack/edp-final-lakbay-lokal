@@ -3,11 +3,19 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
-app.use(express.json());
-app.use(cors());
 
-// MongoDB Connection (Local or Atlas)
-mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/lakbay_lokal')
+// Enable CORS for all incoming mobile and web requests
+app.use(cors());
+app.use(express.json());
+
+// Support both MONGODB_URI (Vercel default) and MONGO_URI
+const MONGO_CONNECTION_STRING = 
+  process.env.MONGODB_URI || 
+  process.env.MONGO_URI || 
+  'mongodb://127.0.0.1:27017/lakbay_lokal';
+
+// Connect to MongoDB Atlas
+mongoose.connect(MONGO_CONNECTION_STRING)
   .then(() => console.log('MongoDB Connected Successfully'))
   .catch(err => console.error('DB Connection Error:', err));
 
@@ -77,5 +85,11 @@ app.delete('/api/destinations/:id', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Backend server running on port ${PORT}`));
+// Export app for Vercel serverless deployments
+module.exports = app;
+
+// Listen locally when running outside Vercel
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`Backend server running on port ${PORT}`));
+}
