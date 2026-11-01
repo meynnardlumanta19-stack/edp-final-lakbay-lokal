@@ -5,8 +5,9 @@ import './App.css';
 
 const API_BASE = (
   process.env.REACT_APP_API_BASE || 
-  'https://edp-final-lakbay-lokal.onrender.com'
-).replace(/\/$/, '');const EMPTY_FORM = { name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' };
+  'https://edp-final-lakbay-lokal-2.onrender.com'
+).replace(/\/$/, ''); 
+const EMPTY_FORM = { name: '', category: 'Tourist Spot', location: '', description: '', budget: 'Low', imageUrl: '' };
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
