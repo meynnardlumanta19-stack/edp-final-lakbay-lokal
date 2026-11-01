@@ -16,11 +16,13 @@ If the API is hosted at a different address, set `REACT_APP_API_BASE` in
 restart the frontend. Do not use `localhost` for a backend hosted on another
 device, since it refers to the device opening the page.
 
-For a Render backend, set `MONGO_URI` in the Render service's environment
+For a hosted backend, set `MONGO_URI` in the backend service's environment
 variables to your MongoDB Atlas connection string. The backend reads this value
 when connecting to the database; keep the URI private and never commit it.
-Set `REACT_APP_API_BASE` to the Render service URL in the frontend host's
-environment variables, then redeploy the frontend.
+Set `REACT_APP_API_BASE` to the backend deployment URL in the frontend host's
+environment variables, then redeploy the frontend. For a Vercel frontend and
+backend deployed as separate projects, set this to the backend project's
+`*.vercel.app` URL. When both are served from the same origin, leave it unset.
 
 ## Trip planner
 
